@@ -9,6 +9,7 @@ import com.hotelbooking.booking.entity.BookingStatus;
 import com.hotelbooking.booking.exception.BookingConflictException;
 import com.hotelbooking.booking.exception.GlobalExceptionHandler;
 import com.hotelbooking.booking.exception.ResourceNotFoundException;
+import com.hotelbooking.booking.security.AuthenticatedUser;
 import com.hotelbooking.booking.service.BookingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +53,24 @@ class BookingControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
+        // Resolver to simulate authenticated user ID 10 in standalone MVC tests
+        HandlerMethodArgumentResolver authUserResolver = new HandlerMethodArgumentResolver() {
+            @Override
+            public boolean supportsParameter(MethodParameter parameter) {
+                return parameter.getParameterType().isAssignableFrom(AuthenticatedUser.class);
+            }
+
+            @Override
+            public Object resolveArgument(MethodParameter parameter,
+                                          ModelAndViewContainer mavContainer,
+                                          NativeWebRequest webRequest,
+                                          WebDataBinderFactory binderFactory) {
+                return new AuthenticatedUser(10L, "test@example.com", "USER");
+            }
+        };
+
         mockMvc = MockMvcBuilders.standaloneSetup(bookingController)
+                .setCustomArgumentResolvers(authUserResolver)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
@@ -155,9 +178,11 @@ class BookingControllerTest {
     void testCancelBooking_Success() throws Exception {
         LocalDate checkIn = LocalDate.now().plusDays(1);
         LocalDate checkOut = LocalDate.now().plusDays(4);
-        BookingResponseDTO response = new BookingResponseDTO(1L, 10L, 1L, 101L, checkIn, checkOut, 450.0, BookingStatus.CANCELLED, LocalDateTime.now());
+        BookingResponseDTO existingBooking = new BookingResponseDTO(1L, 10L, 1L, 101L, checkIn, checkOut, 450.0, BookingStatus.CONFIRMED, LocalDateTime.now());
+        BookingResponseDTO cancelledResponse = new BookingResponseDTO(1L, 10L, 1L, 101L, checkIn, checkOut, 450.0, BookingStatus.CANCELLED, LocalDateTime.now());
 
-        when(bookingService.cancelBooking(1L)).thenReturn(response);
+        when(bookingService.getBookingById(1L)).thenReturn(existingBooking);
+        when(bookingService.cancelBooking(1L)).thenReturn(cancelledResponse);
 
         mockMvc.perform(put("/api/bookings/1/cancel"))
                 .andExpect(status().isOk())
