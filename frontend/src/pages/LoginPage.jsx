@@ -7,7 +7,7 @@ const LoginPage = () => {
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => location.state?.registeredEmail || '');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -73,6 +73,13 @@ const LoginPage = () => {
         <p className="login-subtitle">
           Sign in to your account to reserve luxury rooms and manage your bookings.
         </p>
+
+        {location.state?.registrationSuccess && (
+          <div className="login-success-banner" role="status">
+            <span>✓</span>
+            <span>Registration successful! Please sign in with your credentials.</span>
+          </div>
+        )}
 
         {location.state?.from && (
           <div className="login-notice-banner" role="status">

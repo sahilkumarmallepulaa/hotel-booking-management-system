@@ -1345,6 +1345,21 @@ progress.loading-spinner:indeterminate::-moz-progress-bar {
   text-align: left;
 }
 
+.login-success-banner {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: left;
+}
+
 .login-error-banner {
   background: #fef2f2;
   border: 1px solid #fecaca;
