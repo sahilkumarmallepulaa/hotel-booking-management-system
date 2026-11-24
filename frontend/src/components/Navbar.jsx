@@ -1,29 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const { currentUser, isAuthenticated, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    setMobileMenuOpen(false);
     navigate('/');
   };
+
+  const closeMenu = () => setMobileMenuOpen(false);
 
   return (
     <header className="navbar">
       <div className="nav-content">
-        <Link to="/" className="brand-logo">
+        <Link to="/" className="brand-logo" onClick={closeMenu}>
           <div className="brand-icon">🏨</div>
           <span>GrandStay</span>
         </Link>
 
+        <button
+          type="button"
+          className="btn-mobile-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
+
         <nav>
-          <ul className="nav-links">
+          <ul className={`nav-links ${mobileMenuOpen ? 'nav-links-open' : ''}`}>
             <li>
               <NavLink
                 to="/"
+                onClick={closeMenu}
                 className={({ isActive }) =>
                   `nav-link ${isActive ? 'active' : ''}`
                 }
@@ -34,6 +49,7 @@ const Navbar = () => {
             <li>
               <NavLink
                 to="/hotels"
+                onClick={closeMenu}
                 className={({ isActive }) =>
                   `nav-link ${isActive ? 'active' : ''}`
                 }
@@ -45,6 +61,7 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/my-bookings"
+                  onClick={closeMenu}
                   className={({ isActive }) =>
                     `nav-link ${isActive ? 'active' : ''}`
                   }
@@ -75,10 +92,10 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link to="/login" className="btn-signin">
+              <Link to="/login" className="btn-signin" onClick={closeMenu}>
                 Sign In
               </Link>
-              <Link to="/register" className="btn-register">
+              <Link to="/register" className="btn-register" onClick={closeMenu}>
                 Register
               </Link>
             </>
