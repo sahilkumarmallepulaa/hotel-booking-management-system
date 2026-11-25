@@ -664,9 +664,11 @@ const HotelDetailsPage = () => {
                     <span>Max Capacity:</span>
                     <strong>{selectedRoom.capacity} Guests</strong>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <span>Guest Account:</span>
-                    <strong>{currentUser?.name} ({currentUser?.email})</strong>
+                    <strong style={{ textAlign: 'right', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                      {currentUser?.name} ({currentUser?.email})
+                    </strong>
                   </div>
                 </div>
 

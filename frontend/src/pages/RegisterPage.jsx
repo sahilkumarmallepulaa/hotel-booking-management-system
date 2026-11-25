@@ -237,7 +237,7 @@ const RegisterPage = () => {
                 <span className="btn-spinner"></span> Creating Account...
               </span>
             ) : (
-              'Create Account &rarr;'
+              'Create Account →'
             )}
           </button>
         </form>

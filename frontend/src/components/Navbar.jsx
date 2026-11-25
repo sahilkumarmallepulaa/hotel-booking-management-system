@@ -70,10 +70,40 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
+
+            {/* Mobile-only Authentication & User Session Controls */}
+            <li className="mobile-nav-auth">
+              {isAuthenticated ? (
+                <div className="mobile-user-area">
+                  <span className="user-greeting-chip" title={currentUser?.email}>
+                    <span className="user-avatar-dot">👤</span>
+                    <span className="user-greeting-name">
+                      {currentUser?.name || currentUser?.email || 'User'}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-signout mobile-signout-btn"
+                    onClick={handleLogout}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="mobile-auth-buttons">
+                  <Link to="/login" className="btn-signin" onClick={closeMenu}>
+                    Sign In
+                  </Link>
+                  <Link to="/register" className="btn-register" onClick={closeMenu}>
+                    Register
+                  </Link>
+                </div>
+              )}
+            </li>
           </ul>
         </nav>
 
-        <div className="nav-actions">
+        <div className="nav-actions desktop-nav-actions">
           {isAuthenticated ? (
             <div className="nav-user-area">
               <span className="user-greeting-chip" title={currentUser?.email}>

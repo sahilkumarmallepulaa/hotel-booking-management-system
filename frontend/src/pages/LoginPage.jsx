@@ -151,7 +151,7 @@ const LoginPage = () => {
                 <span className="btn-spinner"></span> Authenticating...
               </span>
             ) : (
-              'Sign In &rarr;'
+              'Sign In →'
             )}
           </button>
         </form>
